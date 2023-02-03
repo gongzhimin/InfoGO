@@ -1,4 +1,4 @@
-class InfoGo():
+class InfoGO():
     
     def __init__(self):
         self.sender()

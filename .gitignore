@@ -1,2 +1,5 @@
 /imgs
 /xminds
+/.idea
+*.json
+*.html
