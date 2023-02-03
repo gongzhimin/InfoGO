@@ -1,6 +1,7 @@
 /imgs
 /xminds
-/.idea
-*.json
-*.html
-*.xml
+/.git
+#/.idea
+#*.json
+#*.html
+#*.xml
