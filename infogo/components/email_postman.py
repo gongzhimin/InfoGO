@@ -12,7 +12,6 @@ from email_body import EmailBody
 def load_config(config_dir):
     pass
 
-
 table_dict = {
     "date": "2023-1-21",
     "table_title": "Detection Performance of SLEUTH",
