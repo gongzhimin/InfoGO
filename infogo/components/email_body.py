@@ -1,46 +1,42 @@
-import os
-import json
 import random
+import datetime
 import dominate
 import requests
 from dominate.tags import *
 
-TABLE_DIR = "./infogo/records.json"
 
-receiver = {
-    "sur_name": "Zhang",
-    "given_name": "Quandan",
-    "degree": "Prof.",
-    "address": "12345678900@163.com"
+table_dict = {
+    "date": "2023-1-21",
+    "table_title": "Detection Performance of SLEUTH",
+    "table_head": ["AUC", "Logloss", "ASR", "BA"],
+    "table_content": [
+        [0.80, 0.12, 0.99, 0.98],
+        [0.81, 0.11, 0.97, 0.98],
+        [0.88, 0.12, 0.99, 0.99]
+    ],
+    "table_description": "In SLEUTH, encoding and detection are independent on the operation. "
+                         "There is no constraint to maintain the consistency of mask size, "
+                         "we tag the training data with small mask to keep a strong stealthiness "
+                         "and use lager mask during detection. "
 }
 
-def read_table_json(file_path):
-    if not os.path.exists(file_path):
-        raise ValueError(f'No such file: {file_path}')
-
-    with open(file_path, mode='r', encoding="utf-8") as f:
-        table_json = json.load(f)
-
-    return table_json
-
-
 class Table():
-    def __init__(self, table_dir):
-        self.table_dir = table_dir
-        self.table_json = read_table_json(self.table_dir)
+    def __init__(self, table_dict):
+        self.table_dict = table_dict
         try:
             self.make_up_table()
         except KeyError as k:
-            msg = f"ERROR: The key {str(k).upper()} was not found in table JSON!"
+            msg = f"ERROR: The key {str(k).upper()} was not found in table DICT!"
+            self._table_title = "Some Real-Time Results Might Be Worth Your Attention"
             self.table = div(msg, style="color:red;font-size:12pt;font-family:serif;text-align:center;margin:0 "
                                         "auto;border-style:solid;width:80%")
 
     def make_up_table(self):
-        self.table = table(style="text-align:center;margin:0 auto;border-collapse:collapse;")
+        self.table = table(style="text-align:center;margin:0 auto;border-collapse:collapse;font-size:14pt;")
         # set table name
-        table_name = f"Table: {self.table_json['table_name']}"
-        self.table_title = tr(td(table_name,
-                                 colspan=len(self.table_json['table_head']),
+        self._table_title = self.table_dict['table_title']
+        self.table_title = tr(td(f"Table: {self._table_title}",
+                                 colspan=len(self.table_dict['table_head']),
                                  style="border-style:none;font-style:oblique;padding:4pt"))
         self.table += self.table_title
         self.set_table_body()
@@ -49,7 +45,7 @@ class Table():
         self.table_body = tbody()
         # set table head
         self.table_head = tr()
-        for e in self.table_json['table_head']:
+        for e in self.table_dict['table_head']:
             self.table_head += th(e, style="border:2pt;border-style:solid none solid none;padding:6pt")
         self.table_body += self.table_head
         # fill table data
@@ -57,8 +53,8 @@ class Table():
         self.table += self.table_body
 
     def fill_table_data(self):
-        num = len(self.table_json["table_content"])
-        for idx, record in enumerate(self.table_json["table_content"]):
+        num = len(self.table_dict["table_content"])
+        for idx, record in enumerate(self.table_dict["table_content"]):
             table_record = tr()
             for e in record:
                 if idx != num - 1:
@@ -69,19 +65,14 @@ class Table():
 
 
 class EmailBody():
-    def __init__(self, table_dir):
-        self.table_dir = table_dir
-        self.email_body = div(style="font-family:Georgia,serif;font-size:14pt;width:60%;vertical-align:middle;margin:0 "
+    def __init__(self, table_dict, sendee=None, signature="anonymous"):
+        self.table_dict = table_dict
+        self.email_body = div(style="font-family:Georgia,serif;font-size:14pt;width:80%;vertical-align:middle;margin:0 "
                                "auto;background-color:#F6F5F0;color:#555;padding:30pt;")
-        self.receiver = None
-        self.signature = "anonymous"
-        self._table_description = None
+        self.sendee = sendee
+        self.signature = signature
 
-        self.init_email_body()
         self.make_up_email_body()
-
-    def init_email_body(self):
-        pass
 
     def make_up_email_body(self):
         self.set_salutation()
@@ -92,14 +83,15 @@ class EmailBody():
         self.set_daily_quote()
         self.set_ending()
 
+        self.email_body = str(self.email_body)
         print(self.email_body)
 
     def set_salutation(self):
         greetings = ["Dear", "Hi", "Hello", "Hey"]
-        if self.receiver == None:
+        if self.sendee == None or self.sendee == "":
             self._salutation = f"{random.choice(greetings)},"
         else:
-            self._salutation = f"{random.choice(greetings)} {self.receiver['degree']} {self.receiver['sur_name']},"
+            self._salutation = f"{random.choice(greetings)} {self.sendee},"
         self.salutation = div(self._salutation, style="text-align:left;")
         self.email_body += self.salutation
 
@@ -119,17 +111,22 @@ class EmailBody():
         self.email_body += self.opener
 
     def set_table(self):
-        table = Table(self.table_dir)
+        table = Table(self.table_dict)
+        today = datetime.date.today()
+        self.email_title = f"Experiment: {table._table_title} [{today}]".title()
         self.table = table.table
-        self._table = table.table_json
+        self._table = table.table_dict
         self.email_body += self.table
 
     def set_table_description(self):
-        if self._table_description == None:
+        if self.table_dict["table_description"] is None or self.table_dict["table_description"] == "":
+            self._table_description = ""
             return
+
+        self._table_description = self.table_dict["table_description"]
         self.table_description = div(f"DESCR: {self._table_description}",
                                      style="font-family:serif;text-align:left;margin:10pt auto; "
-                                           "border-style:double;width:95%;padding:10pt;")
+                                           "border-style:double;width:80%;padding:10pt;")
         self.email_body += self.table_description
 
     def set_prompt(self):
@@ -175,7 +172,7 @@ class EmailBody():
 
 if __name__ == "__main__":
     print('DEBUG...')
-    email_body = EmailBody(TABLE_DIR)
+    email_body = EmailBody(table_dict)
 
     doc = dominate.document(title='hello')
     doc += email_body.email_body

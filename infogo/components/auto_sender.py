@@ -1,3 +1,0 @@
-
-class AutoSender():
-    pass
