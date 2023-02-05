@@ -1,10 +1,10 @@
-/imgs
 /xminds
 /.git
 /.idea
 /logs
 /__pycache__/
+_config.yaml
 *.html
 *.xml
 *.json
-_config.yaml
+*.pyc

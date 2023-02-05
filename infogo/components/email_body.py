@@ -5,21 +5,6 @@ import requests
 from dominate.tags import *
 
 
-table_dict = {
-    "date": "2023-1-21",
-    "table_title": "Detection Performance of SLEUTH",
-    "table_head": ["AUC", "Logloss", "ASR", "BA"],
-    "table_content": [
-        [0.80, 0.12, 0.99, 0.98],
-        [0.81, 0.11, 0.97, 0.98],
-        [0.88, 0.12, 0.99, 0.99]
-    ],
-    "table_description": "In SLEUTH, encoding and detection are independent on the operation. "
-                         "There is no constraint to maintain the consistency of mask size, "
-                         "we tag the training data with small mask to keep a strong stealthiness "
-                         "and use lager mask during detection. "
-}
-
 class Table():
     def __init__(self, table_dict):
         self.table_dict = table_dict
@@ -71,7 +56,6 @@ class EmailBody():
                                "auto;background-color:#F6F5F0;color:#555;padding:30pt;")
         self.sendee = sendee
         self.signature = signature
-
         self.make_up_email_body()
 
     def make_up_email_body(self):
@@ -82,9 +66,9 @@ class EmailBody():
         self.set_prompt()
         self.set_daily_quote()
         self.set_ending()
-
-        self.email_body = str(self.email_body)
-        print(self.email_body)
+        html_email = dominate.document(title='InfoGO')
+        html_email += self.email_body
+        self.html_email = html_email.render(pretty=True)
 
     def set_salutation(self):
         greetings = ["Dear", "Hi", "Hello", "Hey"]
@@ -105,7 +89,6 @@ class EmailBody():
             "Here are the freshly-baked results of the experiment that you may be interested in.",
             "Please check out the results of the freshly-baked experiment. You won't want to miss this."
         ]
-
         self._opener = f"{random.choice(opens1)} {random.choice(opens2)}"
         self.opener = p(self._opener, style="text-align:left;")
         self.email_body += self.opener
@@ -122,7 +105,6 @@ class EmailBody():
         if self.table_dict["table_description"] is None or self.table_dict["table_description"] == "":
             self._table_description = ""
             return
-
         self._table_description = self.table_dict["table_description"]
         self.table_description = div(f"DESCR: {self._table_description}",
                                      style="font-family:serif;text-align:left;margin:10pt auto; "
@@ -168,17 +150,3 @@ class EmailBody():
         self.InfoGO = a("InfoGO", href="https://github.com/gongzhimin/InfoGO")
         self.end2.add(self.InfoGO)
         self.email_body += self.end2
-
-
-if __name__ == "__main__":
-    print('DEBUG...')
-    email_body = EmailBody(table_dict)
-
-    doc = dominate.document(title='hello')
-    doc += email_body.email_body
-    # save as html file
-    with open('test.html', 'w') as f:
-        f.write(doc.render())
-
-
-

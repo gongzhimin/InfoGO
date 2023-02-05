@@ -1,3 +1,19 @@
 # InfoGO: A Real-Time Notification Tool
 
-SCENARIO:
+![Table of InfoGO](imgs/InfoGO-Table-illustration.jpg)
+
+## Scenario
+
+> you
+
+## Installation
+
+
+
+## Usage
+
+
+
+
+
+## Stinger

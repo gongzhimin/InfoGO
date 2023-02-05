@@ -1,4 +1,13 @@
 sender:
-  smtp_server: smtp.qq.com
+  name: Anonymous
   address: XXXXXXXXXXX@qq.com
+  smtp_server: smtp.qq.com
   authorization_code: XXXXXXXXXXXXXXXX
+
+
+receivers:
+  - name: Alice
+    address: XXXX@XX
+
+  - name: Bob
+    address: XXXX@XX
