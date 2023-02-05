@@ -3,7 +3,8 @@
 /.git
 /.idea
 /logs
-/__pycache__
+/__pycache__/
 *.html
 *.xml
+*.json
 _config.yaml
