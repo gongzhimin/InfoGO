@@ -1,0 +1,1 @@
+from .infogo import InfoGO

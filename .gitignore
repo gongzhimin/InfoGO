@@ -2,6 +2,8 @@
 /xminds
 /.git
 /.idea
-*.json
+/logs
+/__pycache__
 *.html
 *.xml
+_config.yaml

@@ -2,15 +2,36 @@ import os
 import json
 import smtplib
 import datetime
-import dominate
 from email.header import Header
 from email.mime.text import MIMEText
 
-from email_body import EmailBody
+from .email_body import EmailBody
 
 
 def load_config(config_dir):
     pass
+
+receivers = [
+    {
+        "name": "Mr. Gong",
+        "address": "3047673038@qq.com"
+    },
+    {
+        "name": "Zhimin",
+        "address": "gongzhimin99@gmail.com"
+    },
+    {
+        "name": "Bachelor. Gong",
+        "address": "gongzhimin@stumail.nwu.edu.cn"
+    }
+]
+
+sender = {
+    "name": "Jimin",
+    "smtp_server": "smtp.qq.com",
+    "address": "logmin@foxmail.com",
+    "authorization_code": "mskoungqxtpjceid",
+}
 
 table_dict = {
     "date": "2023-1-21",
@@ -37,15 +58,12 @@ def save_table_json(table_dict, save_dir='./logs'):
 
 
 class EmailPostman():
-    def __init__(self, table_dict):
+    def __init__(self, table_dict, config=None):
         self.table_dict = table_dict
-        self.receivers = receivers
-        self.sender = sender
+        self.receivers = config["receivers"]
+        self.sender = config["sender"]
 
         self.make_server()
-
-    def init_config(self, config_dir):
-        pass
 
     def make_server(self):
         self.server = smtplib.SMTP_SSL(self.sender["smtp_server"], 465, timeout=3)

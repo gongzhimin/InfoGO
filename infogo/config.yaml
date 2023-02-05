@@ -1,0 +1,4 @@
+sender:
+  smtp_server: smtp.qq.com
+  address: XXXXXXXXXXX@qq.com
+  authorization_code: XXXXXXXXXXXXXXXX
