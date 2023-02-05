@@ -7,4 +7,4 @@ _config.yaml
 *.html
 *.xml
 *.json
-
+*.pyc
