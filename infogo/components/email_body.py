@@ -138,7 +138,12 @@ class EmailBody():
             "Yours sincerely,",
             "Yours truly,",
             "Most sincerely,",
-            "Sincerely yours,"
+            "Sincerely yours,",
+            "Kind regards,",
+            "Best wishes,",
+            "Yours faithfully,",
+            "Faithfully yours,",
+            "Yours"
         ]
         self.email_body += br()
         self.end1 = p(random.choice(ends1), style="text-align:left;")
